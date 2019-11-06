@@ -8,7 +8,8 @@ var express        = require("express"),
     flash          = require("connect-flash"),
     Campground     = require("./models/campground"),
     Comment        = require("./models/comment"),
-    User           = require("./models/user");
+    User           = require("./models/user"),
+    {getDB, getSecret} = require("./secrets");
     // seedDB         = require("./seeds");
 
 //ROUTES
@@ -17,7 +18,8 @@ var campgroundRoutes = require("./routes/campgrounds"),
     indexRoutes      = require("./routes/index");
 
 //SETUP
-mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true});
+var url = process.env.DATABASEURL || getDB();
+mongoose.connect(url, {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname+"/public"));
@@ -27,7 +29,7 @@ app.use(flash());
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    secret: "A two million dollar woman am I. Everything I need is right here in my arms, and dreams, dreams they shall come.",
+    secret: getSecret(),
     resave: false,
     saveUninitialized: false
 }));
