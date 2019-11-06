@@ -1,3 +1,2 @@
-# yelp-camp
-Campsite Sharing App
+# Campsite Sharing App
 Share your favorite campsites and comment on other camper posts!
