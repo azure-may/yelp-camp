@@ -15,17 +15,13 @@ router.get("/", function(req, res){
 });
 
 //CREATE
-router.post("/", middleware.isLoggedIn, function(req, res){
+router.post("/",middleware.isValidCampground, middleware.isLoggedIn, function(req, res){
     //get data from form and add to campgrounds array
-    var name = req.body.name;
-    var price = req.body.price;
-    var image = req.body.image;
-    var desc = req.body.description;
-    var author = {
+    var newCampground = req.body.campground
+    newCampground.author = {
         id: req.user._id,
         username: req.user.username
     }
-    var newCampground = {name: name, price: price, image: image, description: desc, author: author};
     //Create a new campground and save to DB
     Campground.create(newCampground, function(err, camp){
        if(err){
@@ -70,7 +66,7 @@ router.get("/:id/edit", middleware.isAuthor, function(req, res){
 });
 
 //UPDATE
-router.put("/:id", middleware.isAuthor, function(req, res){
+router.put("/:id", middleware.isValidCampground, middleware.isAuthor, function(req, res){
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, camp){
         if(err){
            req.flash("error", err.message);

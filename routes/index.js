@@ -2,6 +2,7 @@ var express  = require("express");
 var router   = express.Router(); 
 var User     = require("../models/user");
 var passport = require("passport");
+var middleware = require("../middleware");
 
 //LANDING
 router.get("/", function(req, res){
@@ -14,7 +15,7 @@ router.get("/register", function(req, res) {
 });
 
 //CREATE
-router.post("/register", function(req, res) {
+router.post("/register", middleware.isValidRegister, function(req, res) {
     var newUser = new User({username: req.body.username});
     User.register(newUser, req.body.password, function(err, user){
         if (err){
@@ -23,7 +24,7 @@ router.post("/register", function(req, res) {
             return res.render("register");
         }
         passport.authenticate("local")(req, res, function(){
-            req.flash("success", "Welcome to YelpCamp" + user.username);
+            req.flash("success", "Welcome to YelpCamp " + user.username);
             res.redirect("/campgrounds");
         });
     });
@@ -35,7 +36,7 @@ router.get("/login", function(req, res) {
 });
 
 //AUTH
-router.post("/login", passport.authenticate("local", {
+router.post("/login", middleware.isValidLogin, passport.authenticate("local", {
     successRedirect: "/campgrounds",
     failureRedirect: "/login"
 }), function(req, res){
